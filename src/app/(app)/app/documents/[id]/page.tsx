@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ExtractedDocument } from "@/lib/ocr/types";
 import { DocumentResultViewer } from "@/components/ocr/DocumentResultViewer";
 import { sanitizeErrorMessage } from "@/lib/errors/user-messages";
+import { ProcessingAlert } from "@/components/ocr/ProcessingAlert";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
@@ -59,13 +60,8 @@ export default async function DocumentDetailPage({
         </Alert>
       )}
 
-      {document.status === "processing" && (
-        <Alert>
-          <AlertTitle>Processing</AlertTitle>
-          <AlertDescription>
-            This document is still being processed. Refresh in a moment.
-          </AlertDescription>
-        </Alert>
+      {(document.status === "processing" || document.status === "pending") && (
+        <ProcessingAlert />
       )}
 
       {document.status === "completed" && job?.extracted_data && (

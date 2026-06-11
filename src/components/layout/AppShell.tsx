@@ -1,23 +1,37 @@
 "use client";
 
 import Link from "next/link";
+import { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { signOut } from "@/app/(app)/app/actions";
 import { Logo } from "@/components/brand/Logo";
+import { TopLoadingBar } from "@/components/layout/TopLoadingBar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import type { UserProfile } from "@/lib/auth/session";
 import { planLabel } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils";
-import { CreditCard, FileText, LayoutDashboard, LogOut, Upload } from "lucide-react";
+import { CreditCard, FileText, LayoutDashboard, LogOut } from "lucide-react";
 
 const navItems = [
   { href: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/app/documents", label: "Documents", icon: FileText },
-  { href: "/app/documents/new", label: "Upload", icon: Upload },
   { href: "/app/billing", label: "Billing", icon: CreditCard },
 ];
+
+function LinkPendingIndicator() {
+  const { pending } = useLinkStatus();
+
+  if (!pending) return null;
+
+  return (
+    <span
+      className="absolute inset-0 rounded-lg bg-primary/10 animate-pulse"
+      aria-hidden
+    />
+  );
+}
 
 function NavLink({
   item,
@@ -33,6 +47,7 @@ function NavLink({
 
   return (
     <Link href={item.href} className="relative block">
+      <LinkPendingIndicator />
       {active && layoutId && (
         <motion.span
           layoutId={layoutId}
@@ -70,6 +85,7 @@ export function AppShell({
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-muted/40 via-background to-muted/20">
+      <TopLoadingBar />
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl md:flex">
         <div className="border-b border-border px-5 py-5">
           <Link href="/app">
@@ -86,10 +102,10 @@ export function AppShell({
           ))}
         </nav>
         <form action={signOut} className="border-t border-border p-3">
-          <Button type="submit" variant="outline" size="sm" className="w-full gap-2">
+          <SubmitButton type="submit" variant="outline" size="sm" className="w-full gap-2" pendingLabel="Signing out…">
             <LogOut className="size-3.5" aria-hidden />
             Sign out
-          </Button>
+          </SubmitButton>
         </form>
       </aside>
 

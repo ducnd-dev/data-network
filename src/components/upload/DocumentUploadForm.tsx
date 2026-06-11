@@ -4,6 +4,8 @@ import { useRef, useState } from "react";
 import { uploadDocument } from "@/app/(app)/app/documents/actions";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 import { Upload } from "lucide-react";
 
 const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
@@ -52,10 +54,16 @@ export function DocumentUploadForm() {
       className="space-y-4"
     >
       <div
-        className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 px-6 py-12 text-center transition-colors hover:border-primary/50 hover:bg-muted/50"
-        onClick={() => inputRef.current?.click()}
+        className={cn(
+          "relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 px-6 py-12 text-center transition-colors",
+          pending
+            ? "pointer-events-none border-primary/40 bg-primary/5"
+            : "hover:border-primary/50 hover:bg-muted/50"
+        )}
+        onClick={() => !pending && inputRef.current?.click()}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
+          if (pending) return;
           e.preventDefault();
           const file = e.dataTransfer.files[0];
           if (!file || !inputRef.current) return;
@@ -65,6 +73,13 @@ export function DocumentUploadForm() {
           setError(validateFile(file));
         }}
       >
+        {pending && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-xl bg-background/70 backdrop-blur-sm">
+            <Spinner className="size-8 text-primary" label="Uploading document" />
+            <p className="text-sm font-medium text-foreground">Uploading & extracting…</p>
+            <p className="text-xs text-muted-foreground">This may take up to a minute</p>
+          </div>
+        )}
         <Upload className="mb-3 size-8 text-muted-foreground" aria-hidden />
         <p className="text-sm font-medium">Drop invoice or receipt here</p>
         <p className="mt-1 text-xs text-muted-foreground">
@@ -76,6 +91,7 @@ export function DocumentUploadForm() {
           name="file"
           accept={ACCEPTED_TYPES.join(",")}
           className="hidden"
+          disabled={pending}
           onChange={(e) => setError(validateFile(e.target.files?.[0] ?? null))}
         />
       </div>
@@ -86,7 +102,8 @@ export function DocumentUploadForm() {
         </Alert>
       )}
 
-      <Button type="submit" disabled={pending} className="w-full">
+      <Button type="submit" disabled={pending} className="w-full gap-2">
+        {pending && <Spinner label="Uploading" />}
         {pending ? "Uploading & processing…" : "Upload and extract"}
       </Button>
     </form>

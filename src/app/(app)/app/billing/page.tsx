@@ -9,7 +9,7 @@ import {
 } from "@/app/(app)/app/billing/actions";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CREDITS_RESET_HINT, PRICING_GST_NOTE, SUPPORT_EMAIL } from "@/lib/copy";
 import { isStripeConfigured } from "@/lib/stripe/is-configured";
@@ -68,9 +68,9 @@ export default async function BillingPage({
           </Badge>
           {isAdmin && plan !== "free" && stripeReady && (
             <form action={openBillingPortal}>
-              <Button type="submit" variant="outline">
+              <SubmitButton variant="outline" pendingLabel="Opening portal…">
                 Manage subscription
-              </Button>
+              </SubmitButton>
             </form>
           )}
         </CardContent>
@@ -101,9 +101,9 @@ export default async function BillingPage({
                 </CardHeader>
                 <CardContent>
                   <form action={startProCheckout}>
-                    <Button type="submit" className="w-full">
+                    <SubmitButton className="w-full" pendingLabel="Redirecting to checkout…">
                       Upgrade to Pro
-                    </Button>
+                    </SubmitButton>
                   </form>
                 </CardContent>
               </Card>
@@ -117,9 +117,9 @@ export default async function BillingPage({
                 </CardHeader>
                 <CardContent>
                   <form action={startBusinessCheckout}>
-                    <Button type="submit" className="w-full">
+                    <SubmitButton className="w-full" pendingLabel="Redirecting to checkout…">
                       Upgrade to Business
-                    </Button>
+                    </SubmitButton>
                   </form>
                 </CardContent>
               </Card>

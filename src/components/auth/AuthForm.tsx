@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 
 type AuthFormProps = {
   mode: "login" | "signup";
@@ -32,17 +33,24 @@ export function AuthForm({ mode, action }: AuthFormProps) {
         <>
           <div className="space-y-2">
             <Label htmlFor="fullName">Full name</Label>
-            <Input id="fullName" name="fullName" required />
+            <Input id="fullName" name="fullName" required disabled={pending} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="orgName">Organization name</Label>
-            <Input id="orgName" name="orgName" required />
+            <Input id="orgName" name="orgName" required disabled={pending} />
           </div>
         </>
       )}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" required autoComplete="email" />
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          required
+          autoComplete="email"
+          disabled={pending}
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
@@ -53,6 +61,7 @@ export function AuthForm({ mode, action }: AuthFormProps) {
           required
           minLength={8}
           autoComplete={mode === "login" ? "current-password" : "new-password"}
+          disabled={pending}
         />
       </div>
 
@@ -62,7 +71,8 @@ export function AuthForm({ mode, action }: AuthFormProps) {
         </Alert>
       )}
 
-      <Button type="submit" className="w-full" disabled={pending}>
+      <Button type="submit" className="w-full gap-2" disabled={pending}>
+        {pending && <Spinner label="Signing in" />}
         {pending ? "Please wait…" : mode === "login" ? "Sign in" : "Create account"}
       </Button>
     </form>

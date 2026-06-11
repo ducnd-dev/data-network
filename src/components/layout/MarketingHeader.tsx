@@ -35,6 +35,12 @@ export function MarketingHeader() {
         </Link>
         <nav className="hidden items-center gap-6 text-sm md:flex">
           <Link
+            href="/about"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            About
+          </Link>
+          <Link
             href="/pricing"
             className="text-muted-foreground transition-colors hover:text-foreground"
           >

@@ -17,6 +17,12 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  experimental: {
+    serverActions: {
+      // Match upload limit in documents/actions.ts (10MB)
+      bodySizeLimit: "10mb",
+    },
+  },
   images: {
     remotePatterns: [
       ...(r2Pattern ? [r2Pattern] : []),

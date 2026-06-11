@@ -1,5 +1,19 @@
+/**
+ * Brand voice (marketing copy):
+ * - Confident, plain English, outcome-first
+ * - AU spelling: organisation, digitise, analyse
+ * - Avoid vendor jargon on homepage (Azure, RLS, Stripe)
+ * - Technical detail belongs on /about ("Built in the open")
+ */
+
 export const BRAND_NAME = "Data Network";
 export const BRAND_TAGLINE = "Invoice OCR for Australian bookkeepers and SMEs";
+
+export const BRAND_POSITIONING =
+  "The fastest way for Australian bookkeepers to turn paper invoices into clean, structured data.";
+
+export const BRAND_STORY_SHORT =
+  "Data Network helps bookkeepers and SMEs digitise invoices without re-keying every line. Upload a PDF, review extracted fields with confidence scores, and download JSON or CSV for your workflow.";
 
 export const FREE_MONTHLY_CREDITS = 20;
 
@@ -17,3 +31,27 @@ export const SUPPORT_EMAIL =
 
 export const META_DESCRIPTION =
   "Upload invoices and receipts, get structured data with confidence scores. Built for Australian bookkeepers and SMEs.";
+
+export const META_KEYWORDS = [
+  "invoice OCR",
+  "receipt OCR Australia",
+  "bookkeeping automation",
+  "invoice data extraction",
+  "Australian SME",
+  "structured invoice data",
+];
+
+export const BRAND_ROADMAP = [
+  "Phase 1 — OCR SaaS",
+  "Phase 2 — AI OCR + Export",
+  "Phase 3 — Human Verify",
+  "Phase 4 — Data Network",
+  "Phase 5 — Marketplace",
+  "Phase 6 — AI To Earn",
+] as const;
+
+export function getSiteUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (url) return url.replace(/\/$/, "");
+  return "http://localhost:3000";
+}

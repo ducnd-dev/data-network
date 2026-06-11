@@ -27,6 +27,11 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                 <p className="font-display font-semibold">Product</p>
                 <ul className="mt-3 space-y-2.5 text-muted-foreground">
                   <li>
+                    <Link href="/about" className="transition-colors hover:text-foreground">
+                      About
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/pricing" className="transition-colors hover:text-foreground">
                       Pricing
                     </Link>

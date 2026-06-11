@@ -10,6 +10,7 @@
     "test": "vitest run",
     "setup:env": "node scripts/setup-env.mjs",
     "db:migrate": "node scripts/migrate-supabase.mjs",
+    "db:seed": "node scripts/seed-admin.mjs",
     "db:setup": "node scripts/setup-supabase-local.mjs",
     "db:setup:cloud": "node scripts/setup-supabase-cloud.mjs",
     "print:vercel-env": "node scripts/print-vercel-env-checklist.mjs",

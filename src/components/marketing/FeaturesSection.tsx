@@ -1,24 +1,27 @@
 "use client";
 
-import { ScanText, Shield, Zap } from "lucide-react";
+import { Download, ScanText, Shield } from "lucide-react";
 import { FeatureCard } from "@/components/marketing/FeatureCard";
 import { FadeIn, Stagger, StaggerItem } from "@/components/motion/FadeIn";
 
 const features = [
   {
     icon: ScanText,
-    title: "Azure-powered OCR",
-    description: "Prebuilt invoice model with confidence scores on every field.",
+    title: "Accurate invoice capture",
+    description:
+      "Extract vendor, dates, line items, and totals with a confidence score on every field.",
   },
   {
     icon: Shield,
-    title: "Multi-tenant by design",
-    description: "Organization-scoped data with Supabase RLS from day one.",
+    title: "Private to your workspace",
+    description:
+      "Your documents stay isolated to your organisation. Only your team can access them.",
   },
   {
-    icon: Zap,
-    title: "Fast turnaround",
-    description: "Upload a PDF and get structured fields in seconds — ready to review or export.",
+    icon: Download,
+    title: "Review and export",
+    description:
+      "Check extracted fields in the app, then download results as JSON or CSV for your workflow.",
   },
 ];
 
@@ -32,8 +35,8 @@ export function FeaturesSection() {
             Everything you need to digitize invoices
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            Production-ready OCR pipeline with smart classification, usage metering, and
-            enterprise-grade security.
+            Built for Australian bookkeepers and SMEs — simple uploads, clear results, and
+            straightforward monthly plans.
           </p>
         </FadeIn>
 

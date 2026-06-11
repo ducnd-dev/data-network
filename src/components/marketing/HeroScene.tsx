@@ -132,7 +132,7 @@ export function HeroScene() {
         >
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[oklch(0.65_0.18_285)] via-primary to-[oklch(0.7_0.14_200)]" />
           <p className="border-b border-border/40 px-3 py-2 text-[10px] font-medium uppercase tracking-wider text-primary">
-            Structured JSON
+            Structured data
           </p>
           <JsonMock />
         </motion.div>

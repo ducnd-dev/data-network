@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MarketingHeader } from "@/components/layout/MarketingHeader";
 import { Logo } from "@/components/brand/Logo";
 import { Separator } from "@/components/ui/separator";
+import { BRAND_NAME, BRAND_TAGLINE } from "@/lib/copy";
 
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
@@ -18,10 +19,10 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                 <Logo />
               </Link>
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                Multi-tenant invoice OCR SaaS powered by Azure Document Intelligence.
+                {BRAND_TAGLINE}
               </p>
             </div>
-            <div className="flex gap-12 text-sm">
+            <div className="grid grid-cols-2 gap-8 text-sm sm:grid-cols-3 sm:gap-12">
               <div>
                 <p className="font-display font-semibold">Product</p>
                 <ul className="mt-3 space-y-2.5 text-muted-foreground">
@@ -38,16 +39,31 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                 </ul>
               </div>
               <div>
-                <p className="font-display font-semibold">Account</p>
+                <p className="font-display font-semibold">Legal</p>
                 <ul className="mt-3 space-y-2.5 text-muted-foreground">
                   <li>
-                    <Link href="/login" className="transition-colors hover:text-foreground">
-                      Sign in
+                    <Link href="/privacy" className="transition-colors hover:text-foreground">
+                      Privacy
                     </Link>
                   </li>
                   <li>
-                    <Link href="/app" className="transition-colors hover:text-foreground">
-                      Dashboard
+                    <Link href="/terms" className="transition-colors hover:text-foreground">
+                      Terms
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-display font-semibold">Support</p>
+                <ul className="mt-3 space-y-2.5 text-muted-foreground">
+                  <li>
+                    <Link href="/contact" className="transition-colors hover:text-foreground">
+                      Contact
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/login" className="transition-colors hover:text-foreground">
+                      Sign in
                     </Link>
                   </li>
                 </ul>
@@ -56,7 +72,7 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
           </div>
           <Separator className="my-8 opacity-60" />
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} AI OCR Data Network. Invoice OCR SaaS.
+            © {new Date().getFullYear()} {BRAND_NAME}. Invoice OCR SaaS.
           </p>
         </div>
       </footer>

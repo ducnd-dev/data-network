@@ -19,7 +19,7 @@ export function ExtractionPreview() {
     <Card className="glass-card overflow-hidden border-primary/10">
       <CardHeader className="border-b border-border/40 bg-muted/30">
         <CardTitle className="font-display text-lg">Extracted fields</CardTitle>
-        <CardDescription>Review confidence before export</CardDescription>
+        <CardDescription>Sample output — download JSON or CSV from your dashboard</CardDescription>
       </CardHeader>
       <CardContent className="space-y-2 pt-4">
         {fields.map((field, index) => (

@@ -5,12 +5,13 @@ import { FeaturesSection } from "@/components/marketing/FeaturesSection";
 import { ExtractionPreview } from "@/components/marketing/ExtractionPreview";
 import { FadeIn } from "@/components/motion/FadeIn";
 import { Button } from "@/components/ui/button";
+import { CREDITS_EXPLAINER, FREE_CREDITS_LABEL } from "@/lib/copy";
 
 const checklist = [
   "Vendor, invoice ID, dates, tax, and totals",
   "Line items with quantity and amounts",
   "Confidence scores to flag low-quality scans",
-  "Usage-metered plans with Stripe billing",
+  "Download as JSON or CSV when processing completes",
 ];
 
 export default function HomePage() {
@@ -24,12 +25,12 @@ export default function HomePage() {
         <div className="grid items-center gap-12 md:grid-cols-2 lg:gap-16">
           <FadeIn>
             <h2 className="font-display text-3xl font-bold tracking-tight md:text-4xl">
-              From paper to structured JSON
+              From paper to structured data
             </h2>
             <p className="mt-4 leading-relaxed text-muted-foreground">
               Bookkeepers and SMEs spend hours re-keying invoice data. Data Network automates
-              extraction so you can review, export, and integrate — starting with invoices and
-              receipts.
+              extraction so you can review results and download them for your bookkeeping
+              workflow.
             </p>
             <ul className="mt-8 space-y-3 text-sm">
               {checklist.map((item) => (
@@ -41,6 +42,7 @@ export default function HomePage() {
                 </li>
               ))}
             </ul>
+            <p className="mt-6 text-sm text-muted-foreground">{CREDITS_EXPLAINER}</p>
           </FadeIn>
 
           <FadeIn delay={0.15}>
@@ -59,7 +61,7 @@ export default function HomePage() {
             Ready to automate your invoice workflow?
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Start with 20 free page credits per month. No credit card required.
+            Start with {FREE_CREDITS_LABEL}. No credit card required.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Button size="lg" className="glow-primary" asChild>

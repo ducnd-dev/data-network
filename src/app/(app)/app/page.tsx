@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CREDITS_RESET_HINT } from "@/lib/copy";
 import { Upload } from "lucide-react";
 
 export default async function DashboardPage() {
@@ -48,7 +49,7 @@ export default async function DashboardPage() {
         <Button asChild>
           <Link href="/app/documents/new">
             <Upload className="size-4" aria-hidden />
-            Upload invoice
+            Upload document
           </Link>
         </Button>
       </div>
@@ -58,7 +59,7 @@ export default async function DashboardPage() {
           <CardHeader>
             <CardTitle>Usage this month</CardTitle>
             <CardDescription>
-              {usage.used} of {usage.limit} page credits used
+              {usage.used} of {usage.limit} page credits used. {CREDITS_RESET_HINT}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -77,7 +78,9 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle>Plan</CardTitle>
-            <CardDescription>{monthlyPageLimit(plan)} pages per month</CardDescription>
+            <CardDescription>
+              {monthlyPageLimit(plan).toLocaleString()} page credits per month
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Badge variant={plan === "free" ? "secondary" : "success"}>
@@ -85,7 +88,7 @@ export default async function DashboardPage() {
             </Badge>
             {plan === "free" && (
               <p className="mt-3 text-sm text-muted-foreground">
-                Upgrade to Pro for 500 pages/month.
+                Upgrade to Pro for 500 page credits per month.
               </p>
             )}
           </CardContent>

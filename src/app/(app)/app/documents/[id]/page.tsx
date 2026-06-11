@@ -4,6 +4,7 @@ import { getSessionProfile } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
 import type { ExtractedDocument } from "@/lib/ocr/types";
 import { DocumentResultViewer } from "@/components/ocr/DocumentResultViewer";
+import { sanitizeErrorMessage } from "@/lib/errors/user-messages";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
@@ -52,7 +53,9 @@ export default async function DocumentDetailPage({
       {document.status === "failed" && (
         <Alert variant="destructive">
           <AlertTitle>Processing failed</AlertTitle>
-          <AlertDescription>{job?.error_message ?? "Unknown error"}</AlertDescription>
+          <AlertDescription>
+            {sanitizeErrorMessage(job?.error_message)}
+          </AlertDescription>
         </Alert>
       )}
 

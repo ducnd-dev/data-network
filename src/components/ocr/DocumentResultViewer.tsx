@@ -1,4 +1,5 @@
 import { DocumentTypeBadge } from "@/components/ocr/DocumentTypeBadge";
+import { ExportDataButtons } from "@/components/ocr/ExportDataButtons";
 import { InvoiceResultViewer } from "@/components/ocr/InvoiceResultViewer";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type {
+  DocumentType,
   ExtractedDocument,
   ExtractedGeneral,
   ExtractedReceipt,
@@ -163,13 +165,20 @@ export function DocumentResultViewer({
 }) {
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <DocumentTypeBadge type={documentType} />
-        {creditsCharged != null && (
-          <Badge variant="outline">
-            {creditsCharged} page credit{creditsCharged === 1 ? "" : "s"} charged
-          </Badge>
-        )}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <DocumentTypeBadge type={documentType} />
+          {creditsCharged != null && (
+            <Badge variant="outline">
+              {creditsCharged} page credit{creditsCharged === 1 ? "" : "s"} charged
+            </Badge>
+          )}
+        </div>
+        <ExportDataButtons
+          extracted={extracted}
+          fileName={fileName}
+          documentType={documentType as DocumentType | null}
+        />
       </div>
 
       {documentType === "receipt" ? (

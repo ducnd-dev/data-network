@@ -6,6 +6,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { GradientOrbs } from "@/components/marketing/GradientOrbs";
 import { HeroScene } from "@/components/marketing/HeroScene";
+import { FREE_CREDITS_LABEL } from "@/lib/copy";
 
 export function HeroSection() {
   return (
@@ -33,7 +34,7 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             Turn invoices into{" "}
-            <span className="text-gradient">structured data</span> in seconds
+            <span className="text-gradient">structured data</span> quickly
           </motion.h1>
 
           <motion.p
@@ -42,8 +43,8 @@ export function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            Upload PDFs and receipts. Azure Document Intelligence extracts vendor, dates,
-            line items, and totals — ready for your bookkeeping workflow.
+            Upload PDFs and receipts. We extract vendor, dates, line items, and totals —
+            with confidence scores so you know what to double-check.
           </motion.p>
 
           <motion.div
@@ -54,7 +55,7 @@ export function HeroSection() {
           >
             <Button size="lg" className="group gap-2 glow-primary" asChild>
               <Link href="/signup">
-                Start free — 20 credits/month
+                Start free — {FREE_CREDITS_LABEL}
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
             </Button>
@@ -69,7 +70,7 @@ export function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            {["No credit card", "Azure OCR", "Multi-tenant RLS"].map((item) => (
+            {["No credit card", "Confidence scores", "Download JSON or CSV"].map((item) => (
               <span key={item} className="flex items-center gap-1.5">
                 <span className="size-1.5 rounded-full bg-primary" aria-hidden />
                 {item}

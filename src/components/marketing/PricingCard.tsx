@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import type { OrgPlan } from "@/lib/billing/plans";
+import { planLabel, type OrgPlan } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils";
 
 export function PricingCard({
@@ -47,12 +47,12 @@ export function PricingCard({
           </span>
         )}
         <CardHeader>
-          <CardTitle className="font-display text-xl capitalize">{plan}</CardTitle>
+          <CardTitle className="font-display text-xl">{planLabel(plan)}</CardTitle>
           <CardDescription>{details.description}</CardDescription>
           <p className="pt-2 font-display text-4xl font-semibold tracking-tight">
             {details.price}
             {plan !== "free" && (
-              <span className="text-sm font-normal text-muted-foreground">/mo AUD</span>
+              <span className="text-sm font-normal text-muted-foreground">/mo AUD ex GST</span>
             )}
           </p>
         </CardHeader>
@@ -76,7 +76,9 @@ export function PricingCard({
         </CardContent>
         <CardFooter>
           <Button className="w-full" variant={isPro ? "default" : "outline"} asChild>
-            <Link href="/signup">{plan === "free" ? "Start free" : `Get ${plan}`}</Link>
+            <Link href="/signup">
+              {plan === "free" ? "Start free" : `Get ${planLabel(plan)}`}
+            </Link>
           </Button>
         </CardFooter>
       </Card>

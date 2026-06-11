@@ -49,6 +49,6 @@ export const PLAN_FEATURES: Record<
   business: {
     pages: 3000,
     price: "$99",
-    description: "High-volume OCR with all document types and AI extraction.",
+    description: "High-volume OCR with all document types and smart field extraction.",
   },
 };

@@ -19,6 +19,44 @@ const navItems = [
   { href: "/app/billing", label: "Billing", icon: CreditCard },
 ];
 
+function NavLink({
+  item,
+  pathname,
+  layoutId,
+}: {
+  item: (typeof navItems)[number];
+  pathname: string;
+  layoutId?: string;
+}) {
+  const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+  const Icon = item.icon;
+
+  return (
+    <Link href={item.href} className="relative block">
+      {active && layoutId && (
+        <motion.span
+          layoutId={layoutId}
+          className="absolute inset-0 rounded-lg bg-primary shadow-md shadow-primary/20"
+          transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        />
+      )}
+      <span
+        className={cn(
+          "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
+          active
+            ? layoutId
+              ? "text-primary-foreground"
+              : "text-primary"
+            : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
+        )}
+      >
+        <Icon className="size-4 shrink-0" aria-hidden />
+        <span className={layoutId ? undefined : "sr-only md:not-sr-only"}>{item.label}</span>
+      </span>
+    </Link>
+  );
+}
+
 export function AppShell({
   profile,
   children,
@@ -43,34 +81,9 @@ export function AppShell({
           </Badge>
         </div>
         <nav className="flex flex-1 flex-col gap-1 p-3">
-          {navItems.map((item) => {
-            const active = item.exact
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link key={item.href} href={item.href} className="relative block">
-                {active && (
-                  <motion.span
-                    layoutId="nav-active"
-                    className="absolute inset-0 rounded-lg bg-primary shadow-md shadow-primary/20"
-                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span
-                  className={cn(
-                    "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
-                    active
-                      ? "text-primary-foreground"
-                      : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                  )}
-                >
-                  <Icon className="size-4" aria-hidden />
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
+          {navItems.map((item) => (
+            <NavLink key={item.href} item={item} pathname={pathname} layoutId="nav-active" />
+          ))}
         </nav>
         <form action={signOut} className="border-t border-border p-3">
           <Button type="submit" variant="outline" size="sm" className="w-full gap-2">
@@ -80,17 +93,33 @@ export function AppShell({
         </form>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
         <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 px-4 py-3 backdrop-blur-xl md:px-8">
-          <p className="text-sm text-muted-foreground">
-            Signed in as{" "}
-            <span className="font-medium text-foreground">
-              {profile.full_name ?? "User"}
-            </span>
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <Link href="/app" className="md:hidden">
+              <Logo compact />
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              <span className="hidden sm:inline">Signed in as </span>
+              <span className="font-medium text-foreground">
+                {profile.full_name ?? "User"}
+              </span>
+            </p>
+          </div>
         </header>
         <div className="flex-1 px-4 py-6 md:px-8">{children}</div>
       </div>
+
+      <nav
+        className="fixed inset-x-0 bottom-0 z-40 flex border-t border-border/60 bg-background/95 backdrop-blur-xl md:hidden"
+        aria-label="Main navigation"
+      >
+        {navItems.map((item) => (
+          <div key={item.href} className="flex flex-1 justify-center p-2">
+            <NavLink item={item} pathname={pathname} />
+          </div>
+        ))}
+      </nav>
     </div>
   );
 }

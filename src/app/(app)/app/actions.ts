@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { USER_ERRORS } from "@/lib/errors/user-messages";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,7 +13,7 @@ export async function signUp(formData: FormData): Promise<{ error: string } | vo
   const supabase = await createClient();
   const admin = createAdminClient();
   if (!supabase || !admin) {
-    return { error: "Supabase is not configured. Add keys to .env.local" };
+    return { error: USER_ERRORS.AUTH_NOT_CONFIGURED };
   }
 
   const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
@@ -46,7 +47,7 @@ export async function signIn(formData: FormData): Promise<{ error: string } | vo
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
   const supabase = await createClient();
-  if (!supabase) return { error: "Supabase is not configured" };
+  if (!supabase) return { error: USER_ERRORS.AUTH_NOT_CONFIGURED };
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };

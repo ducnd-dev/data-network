@@ -7,6 +7,7 @@ import { isAzureOcrConfigured } from "@/lib/ocr/azure";
 import { runDocumentPipeline } from "@/lib/ocr/run-pipeline";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isR2Configured, uploadToR2 } from "@/lib/storage/r2";
+import { USER_ERRORS } from "@/lib/errors/user-messages";
 import { canProcessOcr, getOrgUsage, recordOcrUsage } from "@/lib/usage/limits";
 
 const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
@@ -26,17 +27,11 @@ export async function uploadDocument(
   if (file.size > MAX_SIZE) return { error: "File must be under 10MB" };
 
   if (!isR2Configured()) {
-    return {
-      error:
-        "File storage is not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, and R2_BUCKET_NAME.",
-    };
+    return { error: USER_ERRORS.R2_NOT_CONFIGURED };
   }
 
   if (!isAzureOcrConfigured()) {
-    return {
-      error:
-        "OCR is not configured. Set AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT and AZURE_DOCUMENT_INTELLIGENCE_KEY.",
-    };
+    return { error: USER_ERRORS.AZURE_NOT_CONFIGURED };
   }
 
   const plan = profile.organizations?.plan ?? "free";
@@ -45,7 +40,7 @@ export async function uploadDocument(
   if (!precheck.allowed) return { error: precheck.reason ?? "Usage limit reached" };
 
   const admin = createAdminClient();
-  if (!admin) return { error: "Database not configured" };
+  if (!admin) return { error: USER_ERRORS.DATABASE_NOT_CONFIGURED };
 
   const documentId = randomUUID();
   const ext =

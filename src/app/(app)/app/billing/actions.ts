@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { USER_ERRORS } from "@/lib/errors/user-messages";
 import { getStripe, getSiteUrl } from "@/lib/stripe/client";
 
 async function getOrgBillingFields(organizationId: string) {
@@ -59,7 +60,7 @@ async function startCheckout(plan: "pro" | "business"): Promise<void> {
   const profile = await requireProfile();
   if (!profile) redirect("/login");
   if (profile.role !== "admin") {
-    billingErrorRedirect("Only workspace admins can manage billing.");
+    billingErrorRedirect(USER_ERRORS.BILLING_ADMIN_ONLY);
   }
 
   const stripe = getStripe();
@@ -69,13 +70,11 @@ async function startCheckout(plan: "pro" | "business"): Promise<void> {
       : process.env.STRIPE_PRICE_ID_PRO_MONTHLY;
 
   if (!stripe || !priceId) {
-    billingErrorRedirect(
-      "Stripe is not configured. Add STRIPE_SECRET_KEY and price IDs."
-    );
+    billingErrorRedirect(USER_ERRORS.STRIPE_NOT_CONFIGURED);
   }
 
   const supabase = await createClient();
-  if (!supabase) billingErrorRedirect("Supabase not configured");
+  if (!supabase) billingErrorRedirect(USER_ERRORS.DATABASE_NOT_CONFIGURED);
 
   const {
     data: { user },
@@ -103,7 +102,7 @@ async function startCheckout(plan: "pro" | "business"): Promise<void> {
     cancel_url: `${siteUrl}/app/billing?canceled=1`,
   });
 
-  if (!session.url) billingErrorRedirect("Checkout session failed");
+  if (!session.url) billingErrorRedirect(USER_ERRORS.CHECKOUT_FAILED);
   redirect(session.url);
 }
 
@@ -111,15 +110,15 @@ export async function openBillingPortal(): Promise<void> {
   const profile = await requireProfile();
   if (!profile) redirect("/login");
   if (profile.role !== "admin") {
-    billingErrorRedirect("Only workspace admins can manage billing.");
+    billingErrorRedirect(USER_ERRORS.BILLING_ADMIN_ONLY);
   }
 
   const stripe = getStripe();
-  if (!stripe) billingErrorRedirect("Stripe is not configured");
+  if (!stripe) billingErrorRedirect(USER_ERRORS.STRIPE_NOT_CONFIGURED);
 
   const org = await getOrgBillingFields(profile.organization_id);
   if (!org?.stripe_customer_id) {
-    billingErrorRedirect("No billing account yet. Subscribe to a paid plan first.");
+    billingErrorRedirect(USER_ERRORS.NO_BILLING_ACCOUNT);
   }
 
   const portal = await stripe.billingPortal.sessions.create({

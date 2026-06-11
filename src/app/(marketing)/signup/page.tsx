@@ -3,6 +3,7 @@ import { signUp } from "@/app/(app)/app/actions";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { AuthLayout } from "@/components/marketing/AuthLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { FREE_CREDITS_LABEL } from "@/lib/copy";
 
 export const metadata = {
   title: "Sign up",
@@ -14,11 +15,22 @@ export default function SignupPage() {
       <Card className="glass-card border-primary/10">
         <CardHeader>
           <CardTitle className="font-display text-xl">Create account</CardTitle>
-          <CardDescription>Start with 20 free OCR pages per month</CardDescription>
+          <CardDescription>Start with {FREE_CREDITS_LABEL}</CardDescription>
         </CardHeader>
         <CardContent>
           <AuthForm mode="signup" action={signUp} />
-          <p className="mt-4 text-center text-sm text-muted-foreground">
+          <p className="mt-4 text-center text-xs text-muted-foreground">
+            By creating an account, you agree to our{" "}
+            <Link href="/terms" className="text-primary hover:underline">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="text-primary hover:underline">
+              Privacy Policy
+            </Link>
+            .
+          </p>
+          <p className="mt-3 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link href="/login" className="font-medium text-primary hover:underline">
               Sign in

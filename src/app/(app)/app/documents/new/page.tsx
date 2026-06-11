@@ -1,25 +1,27 @@
 import { DocumentUploadForm } from "@/components/upload/DocumentUploadForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CREDITS_EXPLAINER } from "@/lib/copy";
 
 export const metadata = {
-  title: "Upload invoice",
+  title: "Upload document",
 };
 
 export default function NewDocumentPage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Upload invoice</h1>
-        <p className="text-sm text-muted-foreground">
-          PDF, JPEG, or PNG up to 10MB. Invoices and receipts use 1× credits per page.
-          Other document types use 2× credits. Free plan: invoice & receipt only.
+        <h1 className="text-2xl font-semibold tracking-tight">Upload document</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          PDF, JPEG, PNG, or WebP up to 10MB. Free plan: invoices and receipts only.
         </p>
+        <p className="mt-1 text-sm text-muted-foreground">{CREDITS_EXPLAINER}</p>
       </div>
       <Card>
         <CardHeader>
           <CardTitle>New document</CardTitle>
           <CardDescription>
-            Azure Document Intelligence will extract vendor, dates, line items, and totals.
+            We extract vendor, dates, line items, and totals with confidence scores on each
+            field.
           </CardDescription>
         </CardHeader>
         <CardContent>

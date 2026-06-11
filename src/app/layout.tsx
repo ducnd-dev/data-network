@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
+import { BRAND_NAME, META_DESCRIPTION } from "@/lib/copy";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,11 +21,10 @@ const syne = Syne({
 
 export const metadata: Metadata = {
   title: {
-    default: "AI OCR Data Network",
-    template: "%s | AI OCR Data Network",
+    default: BRAND_NAME,
+    template: `%s | ${BRAND_NAME}`,
   },
-  description:
-    "Invoice OCR SaaS powered by Azure Document Intelligence. Upload invoices and receipts, get structured data instantly.",
+  description: META_DESCRIPTION,
 };
 
 export default function RootLayout({

@@ -36,17 +36,19 @@ In Supabase Dashboard → Authentication → URL configuration:
 | `AZURE_DOCUMENT_INTELLIGENCE_KEY` | Yes | OCR |
 | `R2_*` | Yes | File storage |
 | `OPENAI_API_KEY` | Recommended | General doc pipeline |
-| `STRIPE_*` | Optional | Billing |
+| `POLAR_*` | Optional | Billing |
 | `CRON_SECRET` | Yes | Protects `/api/cron/reset-usage` |
 
 Do **not** set `DATABASE_URL` on Vercel — migrations run separately via `npm run db:migrate`.
 
-## Stripe webhook (production)
+## Polar webhook (production)
 
-1. Stripe Dashboard → Webhooks → Add endpoint
-2. URL: `https://your-app.vercel.app/api/stripe/webhook`
-3. Events: `checkout.session.completed`, `customer.subscription.*`, `invoice.payment_failed`
-4. Copy signing secret → `STRIPE_WEBHOOK_SECRET` on Vercel
+1. Polar Dashboard → Settings → Webhooks → Add endpoint
+2. URL: `https://your-app.vercel.app/api/polar/webhook`
+3. Events: `subscription.active`, `subscription.updated`, `subscription.canceled`, `subscription.past_due`, `subscription.revoked`
+4. Copy signing secret → `POLAR_WEBHOOK_SECRET` on Vercel
+
+Run `npm run setup:polar-products` once per environment (sandbox/production) to create products and print `POLAR_PRODUCT_ID_*` values.
 
 ## Cron
 

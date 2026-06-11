@@ -1,31 +1,95 @@
-import type Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { planFromProductId } from "@/lib/polar/plans";
 
-function planFromPriceId(priceId: string | undefined): "pro" | "business" | "free" {
-  if (!priceId) return "free";
-  if (priceId === process.env.STRIPE_PRICE_ID_BUSINESS_MONTHLY) return "business";
-  if (priceId === process.env.STRIPE_PRICE_ID_PRO_MONTHLY) return "pro";
-  return "pro";
+export type PolarSubscription = {
+  id: string;
+  customerId: string;
+  productId: string;
+  status: string;
+  customer?: {
+    externalId?: string | null;
+    email?: string | null;
+  } | null;
+};
+
+function normalizedStatus(status: string | undefined): string {
+  if (!status) return "unknown";
+  return status.toLowerCase();
+}
+
+function isEntitledStatus(status: string | undefined): boolean {
+  return status === "active" || status === "trialing";
+}
+
+export function organizationIdFromSubscription(
+  subscription: PolarSubscription
+): string | null {
+  return subscription.customer?.externalId ?? null;
 }
 
 export async function updateOrgFromSubscription(
   organizationId: string,
-  subscription: Stripe.Subscription
+  subscription: PolarSubscription
 ): Promise<void> {
   const admin = createAdminClient();
   if (!admin) return;
 
   const status = subscription.status;
-  const active = status === "active" || status === "trialing";
-  const priceId = subscription.items.data[0]?.price?.id;
-  const plan = active ? planFromPriceId(priceId) : "free";
+  const entitled = isEntitledStatus(status);
+  const plan = entitled ? planFromProductId(subscription.productId) : "free";
 
   await admin
     .from("organizations")
     .update({
-      stripe_subscription_id: subscription.id,
-      stripe_subscription_status: status,
-      plan,
+      polar_customer_id: subscription.customerId,
+      polar_subscription_id: subscription.id,
+      polar_subscription_status: normalizedStatus(status),
+      plan: entitled ? plan : "free",
+      ...(subscription.customer?.email
+        ? { billing_email: subscription.customer.email }
+        : {}),
+    })
+    .eq("id", organizationId);
+}
+
+export async function syncOrgSubscriptionStatus(
+  organizationId: string,
+  subscription: PolarSubscription
+): Promise<void> {
+  const admin = createAdminClient();
+  if (!admin) return;
+
+  const status = subscription.status;
+  const entitled = isEntitledStatus(status);
+  const plan = entitled ? planFromProductId(subscription.productId) : undefined;
+
+  await admin
+    .from("organizations")
+    .update({
+      polar_customer_id: subscription.customerId,
+      polar_subscription_id: subscription.id,
+      polar_subscription_status: normalizedStatus(status),
+      ...(plan ? { plan } : {}),
+      ...(subscription.customer?.email
+        ? { billing_email: subscription.customer.email }
+        : {}),
+    })
+    .eq("id", organizationId);
+}
+
+export async function setOrgCanceled(
+  organizationId: string,
+  subscription: PolarSubscription
+): Promise<void> {
+  const admin = createAdminClient();
+  if (!admin) return;
+
+  await admin
+    .from("organizations")
+    .update({
+      polar_customer_id: subscription.customerId,
+      polar_subscription_id: subscription.id,
+      polar_subscription_status: "canceled",
     })
     .eq("id", organizationId);
 }
@@ -37,8 +101,8 @@ export async function downgradeOrg(organizationId: string): Promise<void> {
   await admin
     .from("organizations")
     .update({
-      stripe_subscription_id: null,
-      stripe_subscription_status: "canceled",
+      polar_subscription_id: null,
+      polar_subscription_status: "canceled",
       plan: "free",
     })
     .eq("id", organizationId);
@@ -46,7 +110,7 @@ export async function downgradeOrg(organizationId: string): Promise<void> {
 
 export async function setOrgPastDue(
   organizationId: string,
-  subscriptionId: string
+  subscription: PolarSubscription
 ): Promise<void> {
   const admin = createAdminClient();
   if (!admin) return;
@@ -54,8 +118,9 @@ export async function setOrgPastDue(
   await admin
     .from("organizations")
     .update({
-      stripe_subscription_id: subscriptionId,
-      stripe_subscription_status: "past_due",
+      polar_customer_id: subscription.customerId,
+      polar_subscription_id: subscription.id,
+      polar_subscription_status: "past_due",
     })
     .eq("id", organizationId);
 }

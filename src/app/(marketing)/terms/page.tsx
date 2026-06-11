@@ -38,9 +38,9 @@ export default function TermsPage() {
 
       <h2>Billing</h2>
       <p>
-        Paid plans are billed monthly in AUD unless stated otherwise. Page credits reset on the
-        1st of each calendar month. Subscriptions may be canceled through the billing portal
-        where available. Refunds are handled at our discretion unless required by law.
+        Paid plans are billed monthly in USD unless stated otherwise. Page credits reset on the
+        1st of each calendar month. Workspace admins can change or cancel subscriptions from the
+        billing portal. Refunds are handled at our discretion unless required by law.
       </p>
 
       <h2>Disclaimer</h2>

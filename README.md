@@ -2,7 +2,7 @@
 
 Multi-tenant invoice OCR SaaS — Phase 1 of a 6-phase platform.
 
-Upload invoices and receipts, extract structured data via **Azure Document Intelligence**, review results in a dashboard, and manage usage with **Stripe** billing.
+Upload invoices and receipts, extract structured data via **Azure Document Intelligence**, review results in a dashboard, and manage usage with **Polar** billing.
 
 ## Roadmap
 
@@ -21,7 +21,7 @@ Upload invoices and receipts, extract structured data via **Azure Document Intel
 - **Supabase** — auth, Postgres, RLS multi-tenant
 - **Azure Document Intelligence** — prebuilt-invoice model
 - **Cloudflare R2** — document storage
-- **Stripe** — subscriptions + webhooks
+- **Polar** — subscriptions + webhooks
 - **Vercel** — deployment + cron
 
 ## Getting started
@@ -51,7 +51,7 @@ npm run dev
 
 ```bash
 cp .env.example .env.local
-# Fill in Supabase, Azure, R2, and Stripe keys
+# Fill in Supabase, Azure, R2, and Polar keys
 DATABASE_URL="postgresql://..." npm run db:migrate
 npm run dev
 ```
@@ -71,7 +71,7 @@ See [`.env.example`](.env.example) for the full list.
 | `SUPABASE_SERVICE_ROLE_KEY` | Server-side admin operations |
 | `AZURE_DOCUMENT_INTELLIGENCE_*` | Invoice OCR |
 | `R2_*` | Document file storage |
-| `STRIPE_*` | Billing |
+| `POLAR_*` | Billing |
 | `CRON_SECRET` | Protect usage reset endpoint |
 
 ## Database
@@ -116,7 +116,7 @@ Free plan: invoice & receipt only. COGS tracked per job in `estimated_cogs_aud`.
 ```
 Upload → R2 storage → Azure prebuilt-invoice → Supabase (documents + ocr_jobs)
                     ↓
-              Usage metering → Stripe plan gating
+              Usage metering → Polar plan gating
 ```
 
 Organization-scoped RLS ensures tenant isolation. OCR jobs store raw Azure response and mapped `extracted_data` JSON for the results viewer.

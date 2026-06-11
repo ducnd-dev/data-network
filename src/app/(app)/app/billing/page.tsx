@@ -1,18 +1,22 @@
 import Link from "next/link";
 import { getSessionProfile } from "@/lib/auth/session";
+import { getOrgBilling } from "@/lib/billing/get-org-billing";
 import { getOrgUsage } from "@/lib/usage/limits";
-import { PLAN_FEATURES, planLabel } from "@/lib/billing/plans";
+import { planLabel } from "@/lib/billing/plans";
 import {
-  openBillingPortal,
+  openCustomerPortal,
   startBusinessCheckout,
   startProCheckout,
 } from "@/app/(app)/app/billing/actions";
+import { UpgradePlanCard } from "@/components/billing/UpgradePlanCard";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CREDITS_RESET_HINT, PRICING_GST_NOTE, SUPPORT_EMAIL } from "@/lib/copy";
-import { isStripeConfigured } from "@/lib/stripe/is-configured";
+import { Progress } from "@/components/ui/progress";
+import { CREDITS_RESET_HINT, PRICING_NOTE, SUPPORT_EMAIL } from "@/lib/copy";
+import { isPolarConfigured } from "@/lib/polar/is-configured";
 
 export const metadata = {
   title: "Billing",
@@ -29,15 +33,18 @@ export default async function BillingPage({
   const params = await searchParams;
   const plan = profile.organizations?.plan ?? "free";
   const usage = await getOrgUsage(profile.organization_id);
+  const usagePercent = Math.min(100, Math.round((usage.used / usage.limit) * 100));
+  const billing = await getOrgBilling(profile.organization_id);
   const isAdmin = profile.role === "admin";
-  const stripeReady = isStripeConfigured();
+  const polarReady = isPolarConfigured();
+  const isPastDue = billing?.polar_subscription_status === "past_due";
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Billing</h1>
-        <p className="text-sm text-muted-foreground">Manage your subscription and page credits</p>
-      </div>
+      <PageHeader
+        title="Billing"
+        description="Manage your subscription and page credits"
+      />
 
       {params.error && (
         <Alert variant="destructive">
@@ -46,12 +53,22 @@ export default async function BillingPage({
       )}
       {params.subscribed && (
         <Alert>
-          <AlertDescription>Subscription activated. Thank you!</AlertDescription>
+          <AlertDescription>
+            Payment received. Your subscription will activate shortly once processing completes.
+          </AlertDescription>
         </Alert>
       )}
       {params.canceled && (
         <Alert>
           <AlertDescription>Checkout canceled. No changes were made.</AlertDescription>
+        </Alert>
+      )}
+      {isPastDue && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            Your last payment failed. Please update your payment method in the billing portal or
+            contact support.
+          </AlertDescription>
         </Alert>
       )}
 
@@ -66,8 +83,12 @@ export default async function BillingPage({
           <Badge variant={plan === "free" ? "secondary" : "success"}>
             {planLabel(plan)}
           </Badge>
-          {isAdmin && plan !== "free" && stripeReady && (
-            <form action={openBillingPortal}>
+          <Progress value={usagePercent} />
+          {billing?.billing_email && (
+            <p className="text-sm text-muted-foreground">Billing email: {billing.billing_email}</p>
+          )}
+          {isAdmin && plan !== "free" && polarReady && (
+            <form action={openCustomerPortal}>
               <SubmitButton variant="outline" pendingLabel="Opening portal…">
                 Manage subscription
               </SubmitButton>
@@ -78,7 +99,7 @@ export default async function BillingPage({
 
       {plan === "free" && isAdmin && (
         <>
-          {!stripeReady && (
+          {!polarReady && (
             <Alert>
               <AlertDescription>
                 Paid plans are not available online yet. Email{" "}
@@ -89,40 +110,10 @@ export default async function BillingPage({
               </AlertDescription>
             </Alert>
           )}
-          {stripeReady && (
+          {polarReady && (
             <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Pro</CardTitle>
-                  <CardDescription>
-                    {PLAN_FEATURES.pro.price}/mo AUD ex GST —{" "}
-                    {PLAN_FEATURES.pro.pages.toLocaleString()} page credits
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form action={startProCheckout}>
-                    <SubmitButton className="w-full" pendingLabel="Redirecting to checkout…">
-                      Upgrade to Pro
-                    </SubmitButton>
-                  </form>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Business</CardTitle>
-                  <CardDescription>
-                    {PLAN_FEATURES.business.price}/mo AUD ex GST —{" "}
-                    {PLAN_FEATURES.business.pages.toLocaleString()} page credits
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form action={startBusinessCheckout}>
-                    <SubmitButton className="w-full" pendingLabel="Redirecting to checkout…">
-                      Upgrade to Business
-                    </SubmitButton>
-                  </form>
-                </CardContent>
-              </Card>
+              <UpgradePlanCard plan="pro" checkoutAction={startProCheckout} />
+              <UpgradePlanCard plan="business" checkoutAction={startBusinessCheckout} />
             </div>
           )}
         </>
@@ -135,7 +126,7 @@ export default async function BillingPage({
       )}
 
       <p className="text-xs text-muted-foreground">
-        {PRICING_GST_NOTE} Need help?{" "}
+        {PRICING_NOTE} Need help?{" "}
         <Link href="/pricing" className="underline">
           Compare plans
         </Link>{" "}

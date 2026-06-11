@@ -1,4 +1,5 @@
 import { DocumentUploadForm } from "@/components/upload/DocumentUploadForm";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CREDITS_EXPLAINER } from "@/lib/copy";
 
@@ -9,13 +10,10 @@ export const metadata = {
 export default function NewDocumentPage() {
   return (
     <div className="mx-auto max-w-xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Upload document</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          PDF, JPEG, PNG, or WebP up to 10MB. Free plan: invoices and receipts only.
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">{CREDITS_EXPLAINER}</p>
-      </div>
+      <PageHeader
+        title="Upload document"
+        description={`PDF, JPEG, PNG, or WebP up to 10MB. Free plan: invoices and receipts only. ${CREDITS_EXPLAINER}`}
+      />
       <Card>
         <CardHeader>
           <CardTitle>New document</CardTitle>

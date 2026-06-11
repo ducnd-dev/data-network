@@ -12,13 +12,24 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import type { UserProfile } from "@/lib/auth/session";
 import { planLabel } from "@/lib/billing/plans";
 import { cn } from "@/lib/utils";
-import { CreditCard, FileText, LayoutDashboard, LogOut } from "lucide-react";
+import { CreditCard, FileText, LayoutDashboard, LogOut, Settings } from "lucide-react";
 
 const navItems = [
   { href: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/app/documents", label: "Documents", icon: FileText },
   { href: "/app/billing", label: "Billing", icon: CreditCard },
+  { href: "/app/settings", label: "Settings", icon: Settings },
 ];
+
+function getPageTitle(pathname: string): string {
+  if (pathname === "/app") return "Dashboard";
+  if (pathname === "/app/documents") return "Documents";
+  if (pathname === "/app/documents/new") return "Upload";
+  if (pathname.startsWith("/app/documents/")) return "Document";
+  if (pathname === "/app/billing") return "Billing";
+  if (pathname === "/app/settings") return "Settings";
+  return "Data Network";
+}
 
 function LinkPendingIndicator() {
   const { pending } = useLinkStatus();
@@ -82,11 +93,16 @@ export function AppShell({
   const pathname = usePathname();
   const plan = profile.organizations?.plan ?? "free";
   const orgName = profile.organizations?.name ?? "Workspace";
+  const pageTitle = getPageTitle(pathname);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-muted/40 via-background to-muted/20">
+    <div className="relative flex min-h-screen bg-gradient-to-br from-muted/40 via-background to-muted/20">
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,oklch(0.62_0.18_255/0.08),transparent)]"
+        aria-hidden
+      />
       <TopLoadingBar />
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl md:flex">
+      <aside className="relative hidden w-64 shrink-0 flex-col border-r border-border/60 bg-card/80 backdrop-blur-xl md:flex">
         <div className="border-b border-border px-5 py-5">
           <Link href="/app">
             <Logo compact />
@@ -109,14 +125,22 @@ export function AppShell({
         </form>
       </aside>
 
-      <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
+      <div className="relative flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
         <header className="sticky top-0 z-30 border-b border-border/60 bg-background/70 px-4 py-3 backdrop-blur-xl md:px-8">
           <div className="flex items-center justify-between gap-3">
-            <Link href="/app" className="md:hidden">
-              <Logo compact />
-            </Link>
-            <p className="text-sm text-muted-foreground">
-              <span className="hidden sm:inline">Signed in as </span>
+            <div className="flex min-w-0 items-center gap-3">
+              <Link href="/app" className="md:hidden">
+                <Logo compact />
+              </Link>
+              <div className="min-w-0 md:hidden">
+                <p className="truncate font-display text-sm font-semibold">{pageTitle}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {profile.full_name ?? "User"}
+                </p>
+              </div>
+            </div>
+            <p className="hidden text-sm text-muted-foreground md:block">
+              Signed in as{" "}
               <span className="font-medium text-foreground">
                 {profile.full_name ?? "User"}
               </span>

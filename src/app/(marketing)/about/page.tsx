@@ -42,7 +42,7 @@ const stack = [
   "Azure Document Intelligence for invoice/receipt OCR",
   "OpenAI for document classification and general extraction",
   "Cloudflare R2 for secure file storage",
-  "Stripe billing with usage-based page credits",
+  "Polar billing with usage-based page credits",
 ];
 
 export default function AboutPage() {

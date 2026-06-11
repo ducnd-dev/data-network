@@ -52,7 +52,7 @@ export function PricingCard({
           <p className="pt-2 font-display text-4xl font-semibold tracking-tight">
             {details.price}
             {plan !== "free" && (
-              <span className="text-sm font-normal text-muted-foreground">/mo AUD ex GST</span>
+              <span className="text-sm font-normal text-muted-foreground">/mo USD</span>
             )}
           </p>
         </CardHeader>

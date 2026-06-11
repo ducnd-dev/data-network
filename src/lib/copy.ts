@@ -2,7 +2,7 @@
  * Brand voice (marketing copy):
  * - Confident, plain English, outcome-first
  * - AU spelling: organisation, digitise, analyse
- * - Avoid vendor jargon on homepage (Azure, RLS, Stripe)
+ * - Avoid vendor jargon on homepage (Azure, RLS, Polar)
  * - Technical detail belongs on /about ("Built in the open")
  */
 
@@ -24,7 +24,8 @@ export const CREDITS_EXPLAINER =
 
 export const CREDITS_RESET_HINT = "Page credits reset on the 1st of each month.";
 
-export const PRICING_GST_NOTE = "Prices in AUD, excluding GST.";
+export const PRICING_NOTE = "Prices in USD. Taxes are handled at checkout.";
+export const PRICING_GST_NOTE = PRICING_NOTE;
 
 export const SUPPORT_EMAIL =
   process.env.SUPPORT_EMAIL?.trim() || "support@data-network.app";

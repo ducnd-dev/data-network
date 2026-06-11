@@ -27,8 +27,19 @@ export function TopLoadingBar() {
       setActive(true);
     }
 
+    function handleSubmit(event: Event) {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement)) return;
+      if (form.method.toLowerCase() === "get") return;
+      setActive(true);
+    }
+
     document.addEventListener("click", handleClick, true);
-    return () => document.removeEventListener("click", handleClick, true);
+    document.addEventListener("submit", handleSubmit, true);
+    return () => {
+      document.removeEventListener("click", handleClick, true);
+      document.removeEventListener("submit", handleSubmit, true);
+    };
   }, [pathname]);
 
   return (

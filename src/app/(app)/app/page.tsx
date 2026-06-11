@@ -4,6 +4,9 @@ import { getOrgUsage } from "@/lib/usage/limits";
 import { monthlyPageLimit, planLabel } from "@/lib/billing/plans";
 import { createClient } from "@/lib/supabase/server";
 import { formatDate } from "@/lib/utils";
+import { StatCard } from "@/components/app/StatCard";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +20,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CREDITS_RESET_HINT } from "@/lib/copy";
-import { Upload } from "lucide-react";
+import { CreditCard, FileText, Upload, Zap } from "lucide-react";
+
+function startOfMonthIso(): string {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+}
 
 export default async function DashboardPage() {
   const profile = await getSessionProfile();
@@ -28,71 +36,89 @@ export default async function DashboardPage() {
   const plan = profile.organizations?.plan ?? "free";
 
   const supabase = await createClient();
-  const { data: documents } = supabase
-    ? await supabase
-        .from("documents")
-        .select("id, file_name, status, created_at")
-        .eq("organization_id", profile.organization_id)
-        .order("created_at", { ascending: false })
-        .limit(5)
-    : { data: [] };
+  const monthStart = startOfMonthIso();
+
+  const [{ data: documents }, { count: documentsThisMonth }] = supabase
+    ? await Promise.all([
+        supabase
+          .from("documents")
+          .select("id, file_name, status, created_at")
+          .eq("organization_id", profile.organization_id)
+          .order("created_at", { ascending: false })
+          .limit(5),
+        supabase
+          .from("documents")
+          .select("id", { count: "exact", head: true })
+          .eq("organization_id", profile.organization_id)
+          .gte("created_at", monthStart),
+      ])
+    : [{ data: [] }, { count: 0 }];
+
+  const totalDocuments = documents?.length ?? 0;
+  const hasDocuments = totalDocuments > 0;
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            {profile.organizations?.name ?? "Workspace"} — {planLabel(plan)} plan
+      <PageHeader
+        title="Dashboard"
+        description={`${profile.organizations?.name ?? "Workspace"} — ${planLabel(plan)} plan`}
+        action={
+          <Button asChild>
+            <Link href="/app/documents/new">
+              <Upload className="size-4" aria-hidden />
+              Upload document
+            </Link>
+          </Button>
+        }
+      />
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <StatCard
+          title="Page credits"
+          description={`${usage.used} of ${usage.limit} used. ${CREDITS_RESET_HINT}`}
+          icon={Zap}
+        >
+          <Progress value={usagePercent} />
+          {usagePercent >= 80 && (
+            <p className="mt-3 text-sm text-amber-700">
+              Approaching limit.{" "}
+              <Link href="/app/billing" className="underline">
+                Upgrade plan
+              </Link>
+            </p>
+          )}
+        </StatCard>
+
+        <StatCard
+          title="Documents this month"
+          description="Invoices and receipts uploaded since the 1st"
+          icon={FileText}
+        >
+          <p className="font-display text-3xl font-semibold tracking-tight">
+            {documentsThisMonth ?? 0}
           </p>
-        </div>
-        <Button asChild>
-          <Link href="/app/documents/new">
-            <Upload className="size-4" aria-hidden />
-            Upload document
-          </Link>
-        </Button>
-      </div>
+          <Button variant="link" className="mt-2 h-auto p-0" asChild>
+            <Link href="/app/documents">View all documents</Link>
+          </Button>
+        </StatCard>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Usage this month</CardTitle>
-            <CardDescription>
-              {usage.used} of {usage.limit} page credits used. {CREDITS_RESET_HINT}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={usagePercent} />
-            {usagePercent >= 80 && (
-              <p className="mt-3 text-sm text-amber-700 dark:text-amber-300">
-                Approaching limit.{" "}
-                <Link href="/app/billing" className="underline">
-                  Upgrade plan
-                </Link>
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Plan</CardTitle>
-            <CardDescription>
-              {monthlyPageLimit(plan).toLocaleString()} page credits per month
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Badge variant={plan === "free" ? "secondary" : "success"}>
-              {planLabel(plan)}
-            </Badge>
-            {plan === "free" && (
-              <p className="mt-3 text-sm text-muted-foreground">
-                Upgrade to Pro for 500 page credits per month.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Current plan"
+          description={`${monthlyPageLimit(plan).toLocaleString()} page credits per month`}
+          icon={CreditCard}
+        >
+          <Badge variant={plan === "free" ? "secondary" : "success"}>
+            {planLabel(plan)}
+          </Badge>
+          {plan === "free" && (
+            <p className="mt-3 text-sm text-muted-foreground">
+              Upgrade to Pro for 500 page credits per month.{" "}
+              <Link href="/app/billing" className="text-primary underline">
+                Compare plans
+              </Link>
+            </p>
+          )}
+        </StatCard>
       </div>
 
       <Card>
@@ -101,18 +127,26 @@ export default async function DashboardPage() {
             <CardTitle>Recent documents</CardTitle>
             <CardDescription>Latest invoice uploads</CardDescription>
           </div>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/app/documents">View all</Link>
-          </Button>
+          {hasDocuments && (
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/app/documents">View all</Link>
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
-          {!documents?.length ? (
-            <p className="text-sm text-muted-foreground">
-              No documents yet.{" "}
-              <Link href="/app/documents/new" className="text-primary underline">
-                Upload your first invoice
-              </Link>
-            </p>
+          {!hasDocuments ? (
+            <EmptyState
+              icon={FileText}
+              title="No documents yet"
+              description="Upload your first invoice to see extracted fields, confidence scores, and export options."
+              actionLabel="Upload your first invoice"
+              actionHref="/app/documents/new"
+              steps={[
+                "Upload a PDF or image of an invoice or receipt",
+                "Review extracted vendor, dates, and line items",
+                "Download JSON or CSV for your bookkeeping workflow",
+              ]}
+            />
           ) : (
             <Table>
               <TableHeader>
@@ -123,7 +157,7 @@ export default async function DashboardPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {documents.map((doc) => (
+                {documents!.map((doc) => (
                   <TableRow key={doc.id}>
                     <TableCell>
                       <Link

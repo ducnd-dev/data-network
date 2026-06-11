@@ -8,7 +8,7 @@ export const USER_ERRORS = {
   DATABASE_NOT_CONFIGURED:
     "The service is temporarily unavailable. Please try again later.",
   AUTH_NOT_CONFIGURED: "Sign-in is temporarily unavailable. Please try again later.",
-  STRIPE_NOT_CONFIGURED:
+  POLAR_NOT_CONFIGURED:
     "Online billing is not available yet. Contact support to upgrade your plan.",
   OCR_PROCESSING_FAILED:
     "We couldn't read this document. Try a clearer scan or a different file.",
@@ -22,7 +22,7 @@ const TECHNICAL_PATTERNS = [
   /\.env/i,
   /R2_/i,
   /AZURE_/i,
-  /STRIPE_/i,
+  /POLAR_/i,
   /OPENAI_/i,
   /SUPABASE/i,
   /ECONNREFUSED/i,

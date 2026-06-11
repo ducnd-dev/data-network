@@ -1,7 +1,6 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth/session";
 import { isAzureOcrConfigured } from "@/lib/ocr/azure";
 import { runDocumentPipeline } from "@/lib/ocr/run-pipeline";
@@ -15,7 +14,7 @@ const MAX_SIZE = 10 * 1024 * 1024;
 
 export async function uploadDocument(
   formData: FormData
-): Promise<{ error: string } | void> {
+): Promise<{ error: string } | { documentId: string }> {
   const profile = await requireProfile();
   if (!profile) return { error: "Not signed in" };
 
@@ -168,5 +167,5 @@ export async function uploadDocument(
     return { error: message };
   }
 
-  redirect(`/app/documents/${document.id}`);
+  return { documentId: document.id };
 }

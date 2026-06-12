@@ -8,18 +8,22 @@ import type { VariantProps } from "class-variance-authority";
 type SubmitButtonProps = React.ComponentProps<typeof Button> &
   VariantProps<typeof buttonVariants> & {
     pendingLabel?: string;
+    /** Override useFormStatus when the form uses useActionState */
+    pending?: boolean;
   };
 
 export function SubmitButton({
   children,
   pendingLabel,
+  pending: pendingOverride,
   disabled,
   className,
   variant,
   size,
   ...props
 }: SubmitButtonProps) {
-  const { pending } = useFormStatus();
+  const { pending: formPending } = useFormStatus();
+  const pending = pendingOverride ?? formPending;
 
   return (
     <Button

@@ -7,8 +7,8 @@
  * Optional env (or add to .env.local):
  *   SEED_ADMIN_EMAIL=admin@data-network.app
  *   SEED_ADMIN_PASSWORD=DataNetworkAdmin2026!
- *   SEED_ADMIN_NAME=Demo Admin
- *   SEED_ORG_NAME=Demo Workspace
+ *   SEED_ADMIN_NAME=Workspace Admin
+ *   SEED_ORG_NAME=My Organisation
  *   SEED_ORG_PLAN=business   # free | pro | business
  */
 import pg from "pg";
@@ -19,8 +19,8 @@ loadEnvLocal();
 
 const email = process.env.SEED_ADMIN_EMAIL?.trim() || "admin@data-network.app";
 const password = process.env.SEED_ADMIN_PASSWORD?.trim() || "DataNetworkAdmin2026!";
-const fullName = process.env.SEED_ADMIN_NAME?.trim() || "Demo Admin";
-const orgName = process.env.SEED_ORG_NAME?.trim() || "Demo Workspace";
+const fullName = process.env.SEED_ADMIN_NAME?.trim() || "Workspace Admin";
+const orgName = process.env.SEED_ORG_NAME?.trim() || "My Organisation";
 const orgPlan = process.env.SEED_ORG_PLAN?.trim() || "business";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();

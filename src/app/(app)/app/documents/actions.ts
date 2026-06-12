@@ -1,6 +1,8 @@
 "use server";
 
 import { randomUUID } from "crypto";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireProfile } from "@/lib/auth/session";
 import { isAzureOcrConfigured } from "@/lib/ocr/azure";
 import { runDocumentPipeline } from "@/lib/ocr/run-pipeline";
@@ -12,9 +14,12 @@ import { canProcessOcr, getOrgUsage, recordOcrUsage } from "@/lib/usage/limits";
 const ACCEPTED_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 10 * 1024 * 1024;
 
+export type UploadDocumentState = { error: string } | null;
+
 export async function uploadDocument(
+  _prevState: UploadDocumentState,
   formData: FormData
-): Promise<{ error: string } | { documentId: string }> {
+): Promise<UploadDocumentState> {
   const profile = await requireProfile();
   if (!profile) return { error: "Not signed in" };
 
@@ -167,5 +172,7 @@ export async function uploadDocument(
     return { error: message };
   }
 
-  return { documentId: document.id };
+  revalidatePath("/app");
+  revalidatePath("/app/documents");
+  redirect(`/app/documents/${document.id}`);
 }

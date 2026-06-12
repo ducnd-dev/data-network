@@ -92,7 +92,7 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const plan = profile.organizations?.plan ?? "free";
-  const orgName = profile.organizations?.name ?? "Workspace";
+  const orgName = profile.organizations?.name ?? "My organisation";
   const pageTitle = getPageTitle(pathname);
 
   return (

@@ -60,7 +60,9 @@ export default async function DocumentDetailPage({
         </Alert>
       )}
 
-      {(document.status === "processing" || document.status === "pending") && (
+      {(document.status === "classifying" ||
+        document.status === "processing" ||
+        document.status === "pending") && (
         <ProcessingAlert />
       )}
 

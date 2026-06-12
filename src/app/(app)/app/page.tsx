@@ -61,7 +61,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <PageHeader
         title="Dashboard"
-        description={`${profile.organizations?.name ?? "Workspace"} — ${planLabel(plan)} plan`}
+        description={`${profile.organizations?.name ?? "My organisation"} — ${planLabel(plan)} plan`}
         action={
           <Button asChild>
             <Link href="/app/documents/new">

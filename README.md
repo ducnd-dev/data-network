@@ -4,6 +4,10 @@ Multi-tenant invoice OCR SaaS — Phase 1 of a 6-phase platform.
 
 Upload invoices and receipts, extract structured data via **Azure Document Intelligence**, review results in a dashboard, and manage usage with **Polar** billing.
 
+**Live:** [data-network.vercel.app](https://data-network.vercel.app)
+
+[![Invoice OCR landing page — a PDF invoice extracted into structured JSON with a confidence score](docs/home.png)](https://data-network.vercel.app)
+
 ## Roadmap
 
 | Phase | Feature |
